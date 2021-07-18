@@ -1,0 +1,98 @@
+#
+# RPM Spec for Firefox
+#
+
+Name:     firefox
+Version:  __VERSION__
+Release:  1%{?dist}
+Summary:  Mozilla Firefox Web browser
+License:  GPLv3+
+URL:      https://www.mozilla.org
+
+
+%define namever %{name}-%{version}
+%define tarball %{namever}.tar.bz2
+
+
+Source0: %{tarball}
+Source1: firefox.desktop
+Source2: firefox-search-provider.ini
+Source3: firefox.appdata.xml
+
+
+# BuildRequires: ...
+
+# Requires: cairo
+
+%description
+Mozilla Firefox is an open-source web browser, designed for standards
+compliance, performance and portability.
+
+
+%prep
+%setup -q -n %{name}
+
+
+
+%define fflibdir %{_libdir}/%{name}
+%define iconsdir %{_datarootdir}/icons/hicolor
+%define appsdir %{_datarootdir}/applications
+%define searchdir %{_datarootdir}/gnome-shell/search-providers
+%define appdatadir %{_datarootdir}/metainfo
+
+
+%install
+%{__mkdir_p} ${RPM_BUILD_ROOT}/%{fflibdir}
+%{__cp} -r * ${RPM_BUILD_ROOT}/%{fflibdir}
+
+%{__mkdir_p} ${RPM_BUILD_ROOT}/%{_bindir}
+%{__ln_s} %{fflibdir}/%{name} ${RPM_BUILD_ROOT}/%{_bindir}/%{name}
+
+# Icons
+
+for SIZE in 16 32 48 64 128
+do
+    ICONDIR="${RPM_BUILD_ROOT}/%{iconsdir}/${SIZE}x${SIZE}/apps"
+    %{__mkdir_p} ${ICONDIR}
+    %{__ln_s} %{fflibdir}/browser/chrome/icons/default/default${SIZE}.png ${ICONDIR}/%{name}.png
+done
+
+# Desktop info
+
+%{__mkdir_p} ${RPM_BUILD_ROOT}/%{appsdir}
+%{__cp} ${RPM_SOURCE_DIR}/firefox.desktop ${RPM_BUILD_ROOT}/%{appsdir}
+
+%{__mkdir_p} ${RPM_BUILD_ROOT}/%{searchdir}
+%{__cp} ${RPM_SOURCE_DIR}/firefox-search-provider.ini ${RPM_BUILD_ROOT}/%{searchdir}
+
+%{__mkdir_p} ${RPM_BUILD_ROOT}/%{appdatadir}
+%{__cp} ${RPM_SOURCE_DIR}/firefox.appdata.xml ${RPM_BUILD_ROOT}/%{appdatadir}
+	  
+
+
+%post
+touch --no-create %{_datadir}/icons/hicolor &>/dev/null || true
+
+
+
+%postun
+update-desktop-database &> /dev/null || true
+if [ $1 -eq 0 ] ; then
+    touch --no-create %{_datadir}/icons/hicolor &>/dev/null
+    gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || true
+fi
+
+
+
+%posttrans
+gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || true
+
+
+
+%files
+%{_bindir}/*
+%{_libdir}/*
+%{iconsdir}/*/apps/*
+%{appsdir}/*
+%{searchdir}/*
+%{appdatadir}/*
