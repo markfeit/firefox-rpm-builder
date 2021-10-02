@@ -7,6 +7,9 @@ NAME=firefox
 LATEST_URL=https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US
 
 
+default: build
+
+
 #
 # Binary Distribution
 #
@@ -49,9 +52,6 @@ spec: $(SPEC)
 #
 # Build
 #
-
-default:
-	$(MAKE) build
 
 build install rpmdump b i r cb cbr cbi cbic cbrc: $(SPEC)
 	$(MAKE) -f Makefile-stage2 $@
