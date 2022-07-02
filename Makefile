@@ -24,7 +24,11 @@ endif
 
 $(LATEST_FILE):
 	curl --fail --silent --show-error --location --output '$@' '$(LATEST_URL)'
-TO_CLEAN += $(LATEST_FILE)
+
+# Older versions can be left over if the version changes from the last
+# build.  Cover all the bases, not just the latest.
+TO_CLEAN += $(NAME)-*.tar.bz2 
+
 
 
 VERSION=$(shell echo "$(LATEST_FILE)" \
@@ -34,6 +38,8 @@ VERSION=$(shell echo "$(LATEST_FILE)" \
 ifeq ($(VERSION),)
   $(error "Can't determine version.  $(LATEST_FILE)")
 endif
+
+
 
 
 #
