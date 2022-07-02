@@ -1,0 +1,4 @@
+# Things we want Git to ignore
+
+*.tar.bz2
+*~
