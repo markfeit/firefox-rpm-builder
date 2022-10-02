@@ -23,6 +23,9 @@ ifeq ($(LATEST_FILE),)
 endif
 
 $(LATEST_FILE):
+	@echo
+	@echo Downloading version $(VERSION)
+	@echo
 	curl --fail --silent --show-error --location --output '$@' '$(LATEST_URL)'
 
 # Older versions can be left over if the version changes from the last
