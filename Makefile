@@ -63,9 +63,11 @@ spec: $(SPEC)
 #
 
 build install rpmdump b i r cb cbr cbi cbic cbrc: $(SPEC)
-	$(MAKE) -f Makefile-stage2 $@
+	sudo $(MAKE) -f Makefile-stage2 $@
+	sudo chown -R "$(shell id -un).$(shell id -gn)" .
 
 clean c:
+	sudo chown -R "$(shell id -un).$(shell id -gn)" .
 	touch $(SPEC)
 	$(MAKE) -f Makefile-stage2 $@
 	rm -rf $(SPEC)
