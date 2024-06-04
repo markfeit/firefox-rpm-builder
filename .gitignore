@@ -1,4 +1,8 @@
 # Things we want Git to ignore
 
+build.log
+firefox.spec
+rpmbuild
+*.rpm
 *.tar.bz2
 *~
